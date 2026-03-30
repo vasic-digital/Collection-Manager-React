@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "React collection management components for Catalogizer",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
@@ -28,7 +29,12 @@
     "typescript": "^5.4.0",
     "vitest": "^2.0.0"
   },
-  "keywords": ["catalogizer", "collections", "react", "typescript"],
+  "keywords": [
+    "catalogizer",
+    "collections",
+    "react",
+    "typescript"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
