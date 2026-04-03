@@ -39,4 +39,115 @@ describe('CollectionForm', () => {
     render(<CollectionForm onSubmit={vi.fn()} isLoading={true} />)
     expect(screen.getByTestId('submit-btn')).toBeDisabled()
   })
+
+  it('shows "Saving..." text when loading', () => {
+    render(<CollectionForm onSubmit={vi.fn()} isLoading={true} />)
+    expect(screen.getByTestId('submit-btn')).toHaveTextContent('Saving...')
+  })
+
+  it('shows "Save" text when not loading', () => {
+    render(<CollectionForm onSubmit={vi.fn()} />)
+    expect(screen.getByTestId('submit-btn')).toHaveTextContent('Save')
+  })
+
+  it('renders description input', () => {
+    render(<CollectionForm onSubmit={vi.fn()} />)
+    expect(screen.getByTestId('description-input')).toBeTruthy()
+  })
+
+  it('does not show error initially', () => {
+    render(<CollectionForm onSubmit={vi.fn()} />)
+    expect(screen.queryByTestId('form-error')).toBeNull()
+  })
+
+  it('pre-fills form fields from initialValues (edit mode)', () => {
+    render(
+      <CollectionForm
+        onSubmit={vi.fn()}
+        initialValues={{
+          name: 'Existing Collection',
+          description: 'Existing description',
+          is_public: true,
+          is_smart: false,
+        }}
+      />
+    )
+    expect(screen.getByTestId('name-input')).toHaveValue('Existing Collection')
+    expect(screen.getByTestId('description-input')).toHaveValue('Existing description')
+    expect(screen.getByTestId('is-public-checkbox')).toBeChecked()
+    expect(screen.getByTestId('is-smart-checkbox')).not.toBeChecked()
+  })
+
+  it('submits with is_public and is_smart flags', () => {
+    const onSubmit = vi.fn()
+    render(<CollectionForm onSubmit={onSubmit} />)
+    fireEvent.change(screen.getByTestId('name-input'), { target: { value: 'Test' } })
+    fireEvent.click(screen.getByTestId('is-public-checkbox'))
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Test', is_public: true, is_smart: false })
+    )
+  })
+
+  it('does not include smart_rules when is_smart is false', () => {
+    const onSubmit = vi.fn()
+    render(<CollectionForm onSubmit={onSubmit} />)
+    fireEvent.change(screen.getByTestId('name-input'), { target: { value: 'Test' } })
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ smart_rules: undefined })
+    )
+  })
+
+  it('does not render cancel button when onCancel not provided', () => {
+    render(<CollectionForm onSubmit={vi.fn()} />)
+    expect(screen.queryByTestId('cancel-btn')).toBeNull()
+  })
+
+  it('trims whitespace from name before submitting', () => {
+    const onSubmit = vi.fn()
+    render(<CollectionForm onSubmit={onSubmit} />)
+    fireEvent.change(screen.getByTestId('name-input'), { target: { value: '  Trimmed  ' } })
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Trimmed' })
+    )
+  })
+
+  it('treats whitespace-only name as empty and shows error', () => {
+    const onSubmit = vi.fn()
+    render(<CollectionForm onSubmit={onSubmit} />)
+    fireEvent.change(screen.getByTestId('name-input'), { target: { value: '   ' } })
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(screen.getByTestId('form-error')).toHaveTextContent('Name is required')
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('clears error after valid submission following a failed one', () => {
+    const onSubmit = vi.fn()
+    render(<CollectionForm onSubmit={onSubmit} />)
+    // First submit with empty name
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(screen.getByTestId('form-error')).toBeTruthy()
+    // Then fill name and submit again
+    fireEvent.change(screen.getByTestId('name-input'), { target: { value: 'Valid Name' } })
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    expect(screen.queryByTestId('form-error')).toBeNull()
+  })
+
+  it('pre-fills smart rules from initialValues and shows rule builder', () => {
+    render(
+      <CollectionForm
+        onSubmit={vi.fn()}
+        initialValues={{
+          name: 'Smart',
+          is_smart: true,
+          smart_rules: [{ field: 'genre', operator: 'eq', value: 'action' }],
+        }}
+      />
+    )
+    expect(screen.getByTestId('smart-rule-builder')).toBeTruthy()
+    expect(screen.getByTestId('rule-row-0')).toBeTruthy()
+    expect(screen.getByTestId('rule-field-0')).toHaveValue('genre')
+  })
 })
