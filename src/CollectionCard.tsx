@@ -1,13 +1,26 @@
 import React from 'react'
 import type { MediaCollection } from '@vasic-digital/media-types'
 
+/**
+ * Props for the CollectionCard component.
+ */
 export interface CollectionCardProps {
+  /** The collection data to display. */
   collection: MediaCollection
+  /** Optional callback when the collection name is clicked. */
   onOpen?: (collection: MediaCollection) => void
+  /** Optional callback when delete is clicked. */
   onDelete?: (collection: MediaCollection) => void
+  /** Optional callback when edit is clicked. */
   onEdit?: (collection: MediaCollection) => void
 }
 
+/**
+ * Displays a single media collection as a card with name, description,
+ * item count, Smart/Public badges, and optional edit/delete actions.
+ *
+ * @param props - CollectionCardProps
+ */
 export const CollectionCard: React.FC<CollectionCardProps> = ({
   collection,
   onOpen,

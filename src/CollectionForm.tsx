@@ -2,13 +2,27 @@ import React, { useState } from 'react'
 import type { CreateCollectionRequest, SmartCollectionRule } from '@vasic-digital/media-types'
 import { SmartRuleBuilder } from './SmartRuleBuilder'
 
+/**
+ * Props for the CollectionForm component.
+ */
 export interface CollectionFormProps {
+  /** Pre-populated field values for editing an existing collection. */
   initialValues?: Partial<CreateCollectionRequest>
+  /** Called with the form data when the user submits. */
   onSubmit: (data: CreateCollectionRequest) => void
+  /** Optional callback when the cancel button is clicked. */
   onCancel?: () => void
+  /** Disables the submit button and shows a loading label. */
   isLoading?: boolean
 }
 
+/**
+ * Form for creating or editing a media collection. Includes fields for name,
+ * description, public/smart toggles, and an embedded SmartRuleBuilder when
+ * the smart collection option is enabled. Validates that name is non-empty.
+ *
+ * @param props - CollectionFormProps
+ */
 export const CollectionForm: React.FC<CollectionFormProps> = ({
   initialValues = {},
   onSubmit,

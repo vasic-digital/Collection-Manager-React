@@ -1,13 +1,25 @@
 import React from 'react'
 import type { SmartCollectionRule } from '@vasic-digital/media-types'
 
+/**
+ * Props for the SmartRuleBuilder component.
+ */
 export interface SmartRuleBuilderProps {
+  /** Current list of smart collection filter rules. */
   rules: SmartCollectionRule[]
+  /** Called with the updated rules array whenever a rule is added, removed, or modified. */
   onChange: (rules: SmartCollectionRule[]) => void
 }
 
 const OPERATORS = ['eq', 'ne', 'gt', 'lt', 'contains', 'not_contains'] as const
 
+/**
+ * Dynamic rule editor for smart collection filters. Each rule consists of a
+ * field name, comparison operator, and value. Supports adding and removing
+ * rules inline.
+ *
+ * @param props - SmartRuleBuilderProps
+ */
 export const SmartRuleBuilder: React.FC<SmartRuleBuilderProps> = ({ rules, onChange }) => {
   const addRule = () => {
     onChange([...rules, { field: 'media_type', operator: 'eq', value: '' }])
