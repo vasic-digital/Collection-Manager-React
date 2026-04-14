@@ -1,0 +1,8 @@
+Commit: 7735ac56baa975948ce91f79464e72ac0880849d
+Branch: main
+7735ac5 test: expand unit test coverage to 100%
+fc3ef1b Add GitHub Sponsors button for vasic-digital
+567b1f8 security: Add mandatory NO SUDO/ROOT execution constraint
+85b5ec1 docs: add JSDoc to all exported components and hooks
+6643b53 feat: v2.2.0 comprehensive test coverage expansion
+
