@@ -117,4 +117,40 @@ describe('CollectionCard', () => {
     render(<CollectionCard collection={makeCollection({ item_count: 0 })} />)
     expect(screen.getByTestId('collection-count')).toHaveTextContent('0 items')
   })
+
+  it('does not call onOpen when name clicked without onOpen prop', () => {
+    render(<CollectionCard collection={makeCollection()} />)
+    // Should not throw when clicking without onOpen handler
+    fireEvent.click(screen.getByTestId('collection-name'))
+  })
+
+  it('does not trigger onOpen for non-Enter key presses', () => {
+    const onOpen = vi.fn()
+    render(<CollectionCard collection={makeCollection()} onOpen={onOpen} />)
+    fireEvent.keyDown(screen.getByTestId('collection-name'), { key: 'Space' })
+    expect(onOpen).not.toHaveBeenCalled()
+  })
+
+  it('shows both smart and public badges when both are true', () => {
+    render(<CollectionCard collection={makeCollection({ is_smart: true, is_public: true })} />)
+    expect(screen.getByTestId('smart-badge')).toBeTruthy()
+    expect(screen.getByTestId('public-badge')).toBeTruthy()
+  })
+
+  it('renders large item counts', () => {
+    render(<CollectionCard collection={makeCollection({ item_count: 99999 })} />)
+    expect(screen.getByTestId('collection-count')).toHaveTextContent('99999 items')
+  })
+
+  it('cursor is pointer when onOpen provided', () => {
+    render(<CollectionCard collection={makeCollection()} onOpen={vi.fn()} />)
+    const name = screen.getByTestId('collection-name')
+    expect(name.style.cursor).toBe('pointer')
+  })
+
+  it('cursor is default when onOpen not provided', () => {
+    render(<CollectionCard collection={makeCollection()} />)
+    const name = screen.getByTestId('collection-name')
+    expect(name.style.cursor).toBe('default')
+  })
 })
